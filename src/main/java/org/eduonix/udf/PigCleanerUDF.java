@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * Created by ubu on 4/20/14.
+ *
  */
 public class PigCleanerUDF extends LoadFunc  {
 

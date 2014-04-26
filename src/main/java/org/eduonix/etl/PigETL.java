@@ -23,7 +23,7 @@ public class PigETL {
     PigServer pigServer ;
 
 
-    private static String jatPath ="/home/ubu/mapred-pig/pigmodule.jar";
+    private static String jatPath ="/home/ubu/mapredpig/pigmodule.jar";
 
 
 
@@ -44,18 +44,17 @@ public class PigETL {
 
         pigServer.registerQuery( "id_details = FOREACH basicData GENERATE $0 + $1  as  x, $2 +$3 as y, $4 as z ;");
 
-        System.out.println(pigServer.dumpSchema("id_details"));
+        pigServer.registerQuery(
+            "store id_details into '<i>' ;".replaceAll("<i>", outputPath+"/id_details"));
 
-        Iterator<Tuple> tuples = pigServer.openIterator("basicData");
+
+        pigServer.registerQuery(
+                "aggregatedData = FOREACH id_details GENERATE org.eduonix.udf.PigAggregatorUDF() as (x:chararray);");
 
 
-        while(tuples.hasNext()){
-            Tuple t = tuples.next();
-            System.out.println(t);
-        }
 
-        pigServer.registerQuery("store id_details into '<i>' ;".replaceAll("<i>", outputPath+"/id_details"));
-    
+        pigServer.registerQuery(
+                "store aggregatedData into '<i>' ;".replaceAll("<i>", outputPath+"/aggregatedData"));
     }
 
     
